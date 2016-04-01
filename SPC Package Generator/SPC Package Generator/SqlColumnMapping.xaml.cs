@@ -121,7 +121,14 @@ namespace SPC_Package_Generator
 
                 typeCol = type;
                 
-                dt.Rows.Add(true, actualCol, suggestionCol, typeCol, false);
+                //Check if column is code/description to determine nullable/not-nullable
+                bool nullable = true;
+                if(column.ToLower().Contains("code") || column.ToLower().Contains("description"))
+                {
+                    nullable = false;
+                }
+                
+                dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable);
             }
 
             mainGridView.ItemsSource = dt.AsDataView(); 
