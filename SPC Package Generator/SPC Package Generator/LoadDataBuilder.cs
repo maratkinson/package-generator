@@ -11,34 +11,38 @@ namespace SPC_Package_Generator
 {
     class LoadDataBuilder
     {
-        
         //Strings for package
-        String variableXMLList;
-        String cSharpTaskList;
-        String xmlTaskList;
+        string variableXMLList;
+        string cSharpTaskList;
+        string schema;
 
-        //end
-
-        List<String> variablesList_3 = new List<string>();
+        List<string> variablesList_3 = new List<string>();
+        List<string> namePatterns = new List<string>();
+        List<string> filepaths = new List<string>();
 
         //##### BUILD PACKAGE ####################
-        public void buildPackage(List<string> filenames)
+        public void Build_Package(List<string> filepaths, List<string> filenames, string _schema)
         {
+            //set schema
+            schema = _schema;
+
             int count = 0;
 
             foreach (string filename in filenames)
             {
-                String filepath = Files.files[count];
+                string filepath = filepaths[count];
 
                 File.filename = filename;
- 
-                String namePattern = filename.Substring(0, (filename.Length - 4));
+
+                string namePattern = filename.Substring(0, (filename.Length - 4));
                 namePattern = namePattern.Replace(" ", "");
 
+                //Add to list for later processing, passing on to SqlColumnMapping Form.
+                namePatterns.Add(namePattern);
+                
                 createXMLVars(namePattern, filename);
                 addCSharpTask(namePattern);
-                addXMLTask(namePattern, filepath);
-
+                
                 count += 1;
 
             }
@@ -50,15 +54,19 @@ namespace SPC_Package_Generator
                            LoadDataStrings.taskNodeBegin_5 +
                            cSharpTaskList + Environment.NewLine + Environment.NewLine +
                            LoadDataStrings.taskNodeEnd_7 +
-                           xmlTaskList + Environment.NewLine + Environment.NewLine +
+                           "<<<TASK LIST>>>" + Environment.NewLine + Environment.NewLine + //PLACEHOLDER FOR TASKLIST, Only populated after the SQLColumnMapping forms.
                            LoadDataStrings.end_8;
+
             System.IO.File.WriteAllText(@"C:\Test\load-data.dspkg", final);
+
+            SqlColumnMapping sqlCol = new SqlColumnMapping(schema, filepaths, namePatterns, filenames);
+            sqlCol.Show();
 
         }
         //####################################################
 
         //##### Create Variable XML Lists ####################
-        public void createXMLVars(String namePattern, String filename)
+        public void createXMLVars(string namePattern, String filename)
         {
             string beginVar = @"        <Variable name=""";
             string midVar = @""" value=""";
@@ -73,14 +81,13 @@ namespace SPC_Package_Generator
 
         //##### Create C# Task XML Lists ####################
 
-        private void addCSharpTask(String namePattern)
+        private void addCSharpTask(string namePattern)
         {
             string taskString = @"
-            TaskResult result = TaskResult.Success;
-            result = runTask(package, ""{0}"", package.Variables[""{1}""].Value, ""{0}"");
+            TaskResult result = TaskResult.Success;" + Environment.NewLine +
+            @"            result = runTask(package, ""{0}"", package.Variables[""{1}""].Value, ""{0}"");
             if (result != TaskResult.Success)
-            return result;" + Environment.NewLine 
-                            + Environment.NewLine;
+            return result;";
 
             string taskName = "Load" + namePattern.Replace("Pattern", "");
 
@@ -90,63 +97,5 @@ namespace SPC_Package_Generator
         }
         //####################################################
 
-        //##### Create XML Tasks Lists ####################
-
-        private void addXMLTask(String namePattern, String filePath)
-        {
-            string taskString = @"
-                <Task  name=""{0}""
-                       description=""""
-                       type=""Symmetrix.DataStage.Tasks.DelimitedFileImportTask2, Symmetrix.DataStage""
-                       depends=""""
-                       hidden=""True""
-                       enabled=""False"">
-
-                       <Property name=""FileName"" value=""{1}"" />
-                       <Property name=""FirstRowHeaders"" value=""True"" />
-                       <Property name=""TargetConnectionName"" value=""Stage"" />
-                       <Property name=""TargetTableName"" value=""{2}"" />
-                       <Property name=""TruncateTable"" value=""True"" />
-                       <Property name=""DecimalSymbol"" value=""."" />  
-                       <Property name=""WhereClause"" value="""" />
-                       <Property name=""IgnoreDataErrors"" value=""False"" />
-                       <ColumnMappings>
-                              {3}
-                       </ColumnMappings>
-                </Task>" + Environment.NewLine 
-                         + Environment.NewLine;
-
-            string taskName = "Load" + namePattern.Replace("Pattern", "");
-            string sqlTable = "<<FILL IN>>";
-            string columnMappings = "<<COLUMN MAPPING>>" + Environment.NewLine;
-
-            string columnMapping = getColumnMappings(filePath);
-            
-            string finalTaskString = String.Format(taskString, taskName, namePattern, sqlTable, columnMappings);
-
-            xmlTaskList = xmlTaskList + finalTaskString + Environment.NewLine;
-
-            
-        }
-        //####################################################
-
-        private string getColumnMappings(String filePath) 
-        {
-            List<string> loadDT = new List<string>();
-            StreamReader sr = new StreamReader(filePath);
-
-            string[] headers = sr.ReadLine().Split(',');
-            foreach (string header in headers)
-            {
-                String head = header.Replace("\"", "");
-                loadDT.Add(header); // I've added the column headers here.
-            }
-
-            File.fileColumns = loadDT;
-            SqlColumnMapping sqlCol = new SqlColumnMapping();
-            sqlCol.Show();
-
-            return "";
-        }
     }
 }

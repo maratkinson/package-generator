@@ -21,6 +21,7 @@ namespace SPC_Package_Generator
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<String> filepaths = new List<String>();
 
         public MainWindow()
         {
@@ -35,7 +36,7 @@ namespace SPC_Package_Generator
 
         private void StackPanelDropFile_Drop(object sender, DragEventArgs e)
         {
-            Files.files.Clear();
+            filepaths.Clear();
             wrapPanelFiles.Children.Clear();
 
             //TODO: add filter for just csv
@@ -45,7 +46,7 @@ namespace SPC_Package_Generator
 
                 // File handling code
                 foreach (var file in files) {
-                    Files.files.Add(file);
+                    filepaths.Add(file);
                 }
 
                 listFilesInView();
@@ -56,7 +57,7 @@ namespace SPC_Package_Generator
 
         private void listFilesInView(){
 
-            foreach (var file in Files.files)
+            foreach (var file in filepaths)
             {
                 StackPanel sp = new StackPanel();
                 sp.Orientation = Orientation.Horizontal;
@@ -117,15 +118,14 @@ namespace SPC_Package_Generator
         private void buttonStep3_Click(object sender, RoutedEventArgs e)
         {
             List<String> filenames = new List<String>();
-            List<String> filepaths = new List<String>();
 
-            File.schema = dataTypeComboBox.Text;
+            string schema = dataTypeComboBox.Text;
 
-            if (Files.files.Count > 0)
+            if (filepaths.Count > 0)
             {
                 string sPattern = @"[a-zA-Z0-9_ ]*\.csv";
 
-                foreach (string file in Files.files)
+                foreach (string file in filepaths)
                 {
                     Regex regex = new Regex(sPattern);
                     Match match = regex.Match(file);
@@ -138,8 +138,9 @@ namespace SPC_Package_Generator
                 MessageBox.Show("Success");
             }
 
+            //takes a list of all the files and builds the actual first stage package
             LoadDataBuilder ld = new LoadDataBuilder();
-            ld.buildPackage(filenames);
+            ld.Build_Package(filepaths, filenames, schema);
         }
     }
 }

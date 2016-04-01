@@ -16,3 +16,18 @@ C:\Users\mark.atkinson.INFOVEST\documents\visual studio 2013\Projects\SPC Packag
 C:\Users\mark.atkinson.INFOVEST\Documents\GitHub\package-generator\SPC Package Generator\SPC Package Generator\bin\Debug\SPC Package Generator.exe.config
 C:\Users\mark.atkinson.INFOVEST\Documents\GitHub\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator.exe
 C:\Users\mark.atkinson.INFOVEST\Documents\GitHub\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator.pdb
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\bin\Debug\SPC Package Generator.exe.config
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator.exe
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator.pdb
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\bin\Debug\SPC Package Generator.exe
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\bin\Debug\SPC Package Generator.pdb
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator.csprojResolveAssemblyReference.cache
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\MainWindow.baml
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SqlColumnMapping.baml
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\MainWindow.g.cs
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SqlColumnMapping.g.cs
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\App.g.cs
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator_MarkupCompile.cache
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator.g.resources
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC_Package_Generator.Properties.Resources.resources
+C:\Users\RokoBasilisk\Documents\Visual Studio 2013\Projects\package-generator\SPC Package Generator\SPC Package Generator\obj\Debug\SPC Package Generator.csproj.GenerateResource.Cache

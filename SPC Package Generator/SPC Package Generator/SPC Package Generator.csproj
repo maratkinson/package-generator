@@ -57,6 +57,7 @@
     <Compile Include="SqlColumnMapping.xaml.cs">
       <DependentUpon>SqlColumnMapping.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SqlTableStrings.cs" />
     <Compile Include="VariableBuilder.cs" />
     <Compile Include="VariablePackageStrings.cs" />
     <Page Include="MainWindow.xaml">

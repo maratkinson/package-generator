@@ -83,45 +83,41 @@ namespace SPC_Package_Generator
                         + Environment.NewLine;
 
         public static string taskNodeEnd_7 = @"
-                                    return result;
-                                }
+        return result;
+    }
     
-                                public TaskResult runTask(Package package, string taskName, string searchPattern, string fileDescription)
-                                {
-
-                                  string searchPath = package.Variables[""InfostoreDataPath""].Value;
+    public TaskResult runTask(Package package, string taskName, string searchPattern, string fileDescription)
+    {
+        string searchPath = package.Variables[""InfostoreDataPath""].Value;
       
-                                  DirectoryInfo dir = new DirectoryInfo(searchPath);
+        DirectoryInfo dir = new DirectoryInfo(searchPath);
       
-                                  FileInfo[] files = dir.GetFiles(searchPattern);
+        FileInfo[] files = dir.GetFiles(searchPattern);
       
-                                  DelimitedFileImportTask2 task = (DelimitedFileImportTask2)package.Tasks[taskName];
+        DelimitedFileImportTask2 task = (DelimitedFileImportTask2)package.Tasks[taskName];
       
-                                  if(files.Length==1)
-                                  {        
-                                    task.FileName = files[0].FullName;
-                                    task.DateTimeFormat = ""yyyy-MM-dd"";
+        if(files.Length==1)
+        {        
+            task.FileName = files[0].FullName;
+            task.DateTimeFormat = ""yyyy-MM-dd"";
         
-                                    package.Logger.Info(""Found {0} - Processing..."", files[0].Name);
+            package.Logger.Info(""Found {0} - Processing..."", files[0].Name);
         
-                                    return package.ExecuteTask(task);
-                                  }
-                                  else
-                                  {
-                                    throw new FileNotFoundException(String.Format(""Unable to process {0} - File not found or multiple files exist"", fileDescription));
-                                  }    
-          
-                                  return TaskResult.Success;
-      
-                                }
-    
-                              }
-                            }
+            return package.ExecuteTask(task);
+        }
+        else
+        {
+            throw new FileNotFoundException(String.Format(""Unable to process {0} - File not found or multiple files exist"", fileDescription));
+        }    
+            return TaskResult.Success;
+        }
+    }
+}
 
-                            ]]></Property>
-			                            </Task>	  
+       ]]></Property>
+    </Task>	  
 
-                            ";
+";
 
 
         public static string end_8 = @"         </Tasks>
