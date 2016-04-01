@@ -162,10 +162,9 @@ namespace SPC_Package_Generator
                         "<<<TASK LIST>>>";
 
             string taskName = "Load" + namePattern.Replace("Pattern", "");
-            string sqlTable = sqlTable_TextBox.Text;
-
-            //using String interpolation tags in the 20's for XML task properties such as Sql Table and column mapping.
-            string finalTaskString = String.Format(taskString, taskName, namePattern, sqlTable_TextBox.Text, generateListOfColumnMappings());
+            string sqlTable = schema + "." + sqlTable_TextBox.Text;
+            
+            string finalTaskString = String.Format(taskString, taskName, namePattern, sqlTable, generateListOfColumnMappings());
 
             string xmlTaskList = Environment.NewLine + finalTaskString;
 
