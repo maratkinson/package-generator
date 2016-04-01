@@ -13,7 +13,7 @@
               Margin="20,20,20,10">
             <StackPanel x:Name="spanel_FileName" Orientation="Vertical" Grid.Column="0">
                 <Label FontSize="20" Content="Suggested Task Name"/>
-                <Label Name="filename_Label" Content="...." Margin="5,0,10,0" Height="40"/>
+                <TextBox Name="filename_Label" Margin="5,0,10,0" Height="40"/>
             </StackPanel>
 
             <StackPanel x:Name="spanel_SqlTable" Orientation="Vertical" Grid.Column="1">
