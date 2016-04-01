@@ -69,7 +69,7 @@ namespace SPC_Package_Generator
         {
             sqlTable_TextBox.Text = fileName.Replace("\"", "").Replace(" ", "").Replace(".csv", "").Replace("SPC", "");
 
-            filename_Label.Content = fileName.Replace("\"", "");
+            filename_Label.Text = fileName.Replace("\"", "");
         }
 
         //Fills datatable in form and derives sql type from column name values.
