@@ -24,7 +24,7 @@ namespace SPC_Package_Generator
         }
 
         //loop through DataTable from SqlColumnMapping form and generate sql script columns.
-        private string CreateColumnList(DataTable dt)
+        public string CreateColumnList(DataTable dt)
         {
             string columns = "";
 
@@ -36,7 +36,7 @@ namespace SPC_Package_Generator
                                 " ",
                                 dr["TypeColumn"],
                                 " ",
-                                GetNullable(bool.Parse(dr["Nullable"].ToString())),
+                                GetNullable(dr["Nullable"].ToString()),
                                 ",",
                                 Environment.NewLine);
             }
@@ -44,15 +44,19 @@ namespace SPC_Package_Generator
         }
 
         //checks bool value from datatable and converts to sql NULL/NOT NULL codes.
-        private string GetNullable(bool nullable)
+        private string GetNullable(string nullable)
         {
-            if (nullable)
+            if (nullable == "true")
             {
                 return "NULL";
             }
-            else
+            else if (nullable == "false")
             {
                 return "NOT NULL";
+            }
+            else
+            {
+                return "";
             }
         }
     }

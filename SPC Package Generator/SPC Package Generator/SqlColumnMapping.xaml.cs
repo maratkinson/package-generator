@@ -55,12 +55,17 @@ namespace SPC_Package_Generator
             dt.Columns.Add("ActualColumn");
             dt.Columns.Add("TypeColumn");
             dt.Columns.Add("Nullable");
+            dt.Columns.Add("InstrumentImport");
+            dt.Columns.Add("InstrumentRefresh");
+            dt.Columns.Add("PortHolImport");
+            dt.Columns.Add("PortHolRefresh");
             //get column headers
             getColumnMappings(filePath);
 
             populate_misc_table();
 
             populateGridTable();
+
         }
 
         //Populates the SqlTable and filename_Label fields.
@@ -128,7 +133,7 @@ namespace SPC_Package_Generator
                     nullable = false;
                 }
                 
-                dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable);
+                dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, true, true, true, true);
             }
 
             mainGridView.ItemsSource = dt.AsDataView(); 
@@ -179,8 +184,6 @@ namespace SPC_Package_Generator
                 final = final.Replace("<<<TASK LIST>>>", "");
 
                 System.IO.File.WriteAllText(@"C:\Test\load-data.dspkg", final);
-
-                MessageBox.Show("Completed!");
 
                 this.Close();
             }
@@ -251,10 +254,49 @@ namespace SPC_Package_Generator
             System.IO.File.WriteAllText(String.Format(@"C:\Test\SCEMA.sql"), "CREATE SCHEMA " + schema);
         }
 
+        private void popluate2ndLineScripts()
+        {
+            string package = System.IO.File.ReadAllText(@"C:\Test\consolidate-instruments.dspkg");
+
+            ConsolidateInstrumentBuilder cib = new ConsolidateInstrumentBuilder();
+
+            //if it is main instrument file create temp tables
+            if (sqlTable_TextBox.Text.ToLower().Contains("instrument"))
+            {
+                package = package.Replace("<<TEMP TABLE>>", cib.CreateTempInstTable(dt));
+            }
+
+            //Add new sql import portion in instrument task
+            string newImport = cib.AddInstrumentTask(dt, schema, sqlTable_TextBox.Text);
+            package = package.Replace("<<NEW TASK>>", newImport);
+
+            if (filePaths.Count == 1)
+            {
+                package = package + ConsolidateInstrumentStrings.consolInsPackageInstrumentTaskEnd;
+            }
+
+            System.IO.File.WriteAllText(@"C:\Test\consolidate-instruments.dspkg", package);
+        }
+
         private void Generate_Scripts_Click(object sender, RoutedEventArgs e)
         {
-            addXMLTask();
-            GenerateSqlScripts();
+
+            var result =  MessageBox.Show("Do you want to include this file in ConsolidateInstruments?",
+                                          "Consolidate Instruments", 
+                                          MessageBoxButton.YesNo, 
+                                          MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                popluate2ndLineScripts();
+                GenerateSqlScripts();
+                addXMLTask();
+            }
+            else
+            {
+                GenerateSqlScripts();
+                addXMLTask();
+            }            
         }
     }
 }

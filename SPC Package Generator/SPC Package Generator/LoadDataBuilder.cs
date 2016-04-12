@@ -59,6 +59,14 @@ namespace SPC_Package_Generator
 
             System.IO.File.WriteAllText(@"C:\Test\load-data.dspkg", final);
 
+            //Create consolidate Instrument package
+            string consolInstpackage = ConsolidateInstrumentStrings.consolInsPackageStart
+                        + ConsolidateInstrumentStrings.consolInsPackageInstrumentTaskStart + @"<<TEMP TABLE>>
+
+                            <<NEW TASK>>";
+            System.IO.File.WriteAllText(@"C:\Test\consolidate-instruments.dspkg", consolInstpackage);
+
+            //start wizard
             SqlColumnMapping sqlCol = new SqlColumnMapping(schema, filepaths, namePatterns, filenames);
             sqlCol.Show();
 

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SPC_Package_Generator.SqlColumnMapping"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SqlColumnMapping" Height="650" Width="700">
+        Title="SqlColumnMapping" Height="650" Width="900">
     <StackPanel
         Orientation="Vertical">
         <Label
@@ -13,7 +13,7 @@
               Margin="20,20,20,10">
             <StackPanel x:Name="spanel_FileName" Orientation="Vertical" Grid.Column="0">
                 <Label FontSize="20" Content="Suggested Task Name"/>
-                <TextBox Name="filename_Label" Margin="5,0,10,0" Height="40"/>
+                <TextBox Name="filename_Label" Margin="5,0,10,0" Height="30"/>
             </StackPanel>
 
             <StackPanel x:Name="spanel_SqlTable" Orientation="Vertical" Grid.Column="1">
@@ -34,13 +34,22 @@
             <DataGrid AutoGenerateColumns="False" Name="mainGridView" Margin="10">
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="Include"  Binding="{Binding Path=Include}"  Width="60" />
-                        <DataGridTextColumn Header="File Column" Binding="{Binding Path=FileColumn}" Width="195"/>
-                        <DataGridTextColumn Header="Actual Column" Binding="{Binding Path=ActualColumn}" Width="195" />
+                        <DataGridTextColumn Header="File Column" Binding="{Binding Path=FileColumn}" Width="135"/>
+                        <DataGridTextColumn Header="Actual Column" Binding="{Binding Path=ActualColumn}" Width="135" />
                         <DataGridComboBoxColumn Header="Data Type" x:Name="TypeColumnComboBox" 
                         SelectedValueBinding="{Binding TypeColumn, Mode=TwoWay}"  
                         DisplayMemberPath="{Binding TypeColumn}" 
-                        Width="195"/>
+                        Width="90"/>
                         <DataGridCheckBoxColumn Header="Nullable"  Binding="{Binding Path=Nullable}"  Width="60" />
+                        
+                        <!-- Consolidate Instruments -->
+                        <DataGridCheckBoxColumn Header="Inst. Import"  Binding="{Binding Path=InstrumentImport}"  Width="80" />
+                        <DataGridCheckBoxColumn Header="Inst. Refresh"  Binding="{Binding Path=InstrumentRefresh}"  Width="80" />
+                        
+                        <!-- Consolidate Holdings -->
+                        <DataGridCheckBoxColumn Header="Port. Hol. Import"  Binding="{Binding Path=PortHolImport}"  Width="100" />
+                        <DataGridCheckBoxColumn Header="Port. Hol. Refresh"  Binding="{Binding Path=PortHolRefresh}"  Width="100" />
+                        
                 </DataGrid.Columns>
            </DataGrid>
         </ScrollViewer>
