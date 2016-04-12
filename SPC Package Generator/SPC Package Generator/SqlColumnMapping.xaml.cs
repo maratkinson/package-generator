@@ -244,6 +244,11 @@ namespace SPC_Package_Generator
         {
             SqlTableStrings sts = new SqlTableStrings();
             sts.GenerateCreateTable(schema, sqlTable_TextBox.Text, dt);
+
+            string sql = sts.GenerateCreateTable(schema, sqlTable_TextBox.Text, dt);
+
+            System.IO.File.WriteAllText(String.Format(@"C:\Test\{0}.sql", sqlTable_TextBox.Text), sql);
+            System.IO.File.WriteAllText(String.Format(@"C:\Test\SCEMA.sql"), "CREATE SCHEMA " + schema);
         }
 
         private void Generate_Scripts_Click(object sender, RoutedEventArgs e)

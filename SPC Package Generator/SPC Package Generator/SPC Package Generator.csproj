@@ -53,6 +53,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ConsolidateInstrumentBuilder.cs" />
+    <Compile Include="ConsolidateInstrumentStrings.cs" />
     <Compile Include="File.cs" />
     <Compile Include="SqlColumnMapping.xaml.cs">
       <DependentUpon>SqlColumnMapping.xaml</DependentUpon>
