@@ -1,7 +1,8 @@
 ﻿<Window x:Class="SPC_Package_Generator.SqlColumnMapping"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SqlColumnMapping" Height="650" Width="900">
+        Title="SqlColumnMapping" Height="650" Width="900"
+        WindowStartupLocation="CenterScreen">
     <StackPanel
         Orientation="Vertical">
         <Label
@@ -30,8 +31,8 @@
         </Grid>
 
         <Border BorderThickness="2" BorderBrush="LightBlue" Margin="0,0,0,20">
-        <ScrollViewer Height="350" >
-            <DataGrid AutoGenerateColumns="False" Name="mainGridView" Margin="10">
+        <ScrollViewer Height="350" Width="900">
+                <DataGrid AutoGenerateColumns="False" Name="mainGridView" Margin="10" FrozenColumnCount ="3" CanUserAddRows="False" CanUserDeleteRows="False">
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="Include"  Binding="{Binding Path=Include}"  Width="60" />
                         <DataGridTextColumn Header="File Column" Binding="{Binding Path=FileColumn}" Width="135"/>
@@ -46,11 +47,31 @@
                         <DataGridCheckBoxColumn Header="Inst. Import"  Binding="{Binding Path=InstrumentImport}"  Width="80" />
                         <DataGridCheckBoxColumn Header="Inst. Refresh"  Binding="{Binding Path=InstrumentRefresh}"  Width="80" />
                         
-                        <!-- Consolidate Holdings -->
-                        <DataGridCheckBoxColumn Header="Port. Hol. Import"  Binding="{Binding Path=PortHolImport}"  Width="100" />
-                        <DataGridCheckBoxColumn Header="Port. Hol. Refresh"  Binding="{Binding Path=PortHolRefresh}"  Width="100" />
+                        <!-- Consolidate Portfolio -->
+                        <DataGridCheckBoxColumn Header="Portfolio Import"  Binding="{Binding Path=PortfolioImport}"  Width="100" />
+                        <DataGridCheckBoxColumn Header="Portfolio Refresh"  Binding="{Binding Path=PortfolioRefresh}"  Width="100" />
+
+                        <!-- Consolidate Issuer -->
+                        <DataGridCheckBoxColumn Header="Issuer Import"  Binding="{Binding Path=IssuerImport}"  Width="100" />
+                        <DataGridCheckBoxColumn Header="Issuer Refresh"  Binding="{Binding Path=IssuerRefresh}"  Width="100" />
+
+                        <!-- Consolidate Benchmark Constituents -->
+                        <DataGridCheckBoxColumn Header="Bench. Const. Import"  Binding="{Binding Path=BenchConstImport}"  Width="100" />
+                        <DataGridCheckBoxColumn Header="Bench. Const. Refresh"  Binding="{Binding Path=BenchConstRefresh}"  Width="100" />
+
+                        <!-- Consolidate Cuurency -->
+                        <DataGridCheckBoxColumn Header="Currency Import"  Binding="{Binding Path=CurrencyImport}"  Width="100" />
+                        <DataGridCheckBoxColumn Header="Currency Refresh"  Binding="{Binding Path=CurrencyRefresh}"  Width="100" />
+
+                        <!-- Consolidate Country -->
+                        <DataGridCheckBoxColumn Header="Country Import"  Binding="{Binding Path=CountryImport}"  Width="100" />
+                        <DataGridCheckBoxColumn Header="Country Refresh"  Binding="{Binding Path=CountryRefresh}"  Width="100" />
+
+                        <!-- Consolidate Exchange -->
+                        <DataGridCheckBoxColumn Header="Exchange Import"  Binding="{Binding Path=ExchangeImport}"  Width="100" />
+                        <DataGridCheckBoxColumn Header="Exchange Refresh"  Binding="{Binding Path=ExchangeRefresh}"  Width="100" />
                         
-                </DataGrid.Columns>
+                    </DataGrid.Columns>
            </DataGrid>
         </ScrollViewer>
         </Border>

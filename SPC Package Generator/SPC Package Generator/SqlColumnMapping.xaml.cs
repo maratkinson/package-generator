@@ -57,8 +57,19 @@ namespace SPC_Package_Generator
             dt.Columns.Add("Nullable");
             dt.Columns.Add("InstrumentImport");
             dt.Columns.Add("InstrumentRefresh");
-            dt.Columns.Add("PortHolImport");
-            dt.Columns.Add("PortHolRefresh");
+            dt.Columns.Add("PortfolioImport");
+            dt.Columns.Add("PortfolioRefresh");
+            dt.Columns.Add("IssuerImport");
+            dt.Columns.Add("IssuerRefresh");
+            dt.Columns.Add("BenchConstImport");
+            dt.Columns.Add("BenchConstRefresh");
+            dt.Columns.Add("CurrencyImport");
+            dt.Columns.Add("CurrencyRefresh");
+            dt.Columns.Add("CountryImport");
+            dt.Columns.Add("CountryRefresh");
+            dt.Columns.Add("ExchangeImport");
+            dt.Columns.Add("ExchangeRefresh");
+
             //get column headers
             getColumnMappings(filePath);
 
@@ -132,8 +143,8 @@ namespace SPC_Package_Generator
                 {
                     nullable = false;
                 }
-                
-                dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, true, true, true, true);
+
+                dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, true, true, true, true, false, false, false, false, false, false, false, false, false, false);
             }
 
             mainGridView.ItemsSource = dt.AsDataView(); 
@@ -254,7 +265,7 @@ namespace SPC_Package_Generator
             System.IO.File.WriteAllText(String.Format(@"C:\Test\SCEMA.sql"), "CREATE SCHEMA " + schema);
         }
 
-        private void popluate2ndLineScripts()
+        private void GenerateConsolidateInstrumentScript()
         {
             string package = System.IO.File.ReadAllText(@"C:\Test\consolidate-instruments.dspkg");
 
@@ -266,37 +277,71 @@ namespace SPC_Package_Generator
                 package = package.Replace("<<TEMP TABLE>>", cib.CreateTempInstTable(dt));
             }
 
-            //Add new sql import portion in instrument task
+            //Add new SQL import portion in instrument task
             string newImport = cib.AddInstrumentTask(dt, schema, sqlTable_TextBox.Text);
             package = package.Replace("<<NEW TASK>>", newImport);
 
+            //Add new SQL refresh portion in instrument task
+            string newRefresh = cib.CreateRefreshStatement(dt, sqlTable_TextBox.Text, schema);
+            package = package.Replace("<<NEW REFRESH>>", newRefresh);
+
             if (filePaths.Count == 1)
             {
-                package = package + ConsolidateInstrumentStrings.consolInsPackageInstrumentTaskEnd;
+                package = package.Replace("<<END>>", ConsolidateInstrumentStrings.consolInsPackageInstrumentTaskEnd);
+                package = package.Replace("<<NEW REFRESH>>", ""); //REMOVE REFRESH TAG
+                package = package.Replace("<<NEW TASK>>", "");    //REMOVE TASK TAG
             }
 
             System.IO.File.WriteAllText(@"C:\Test\consolidate-instruments.dspkg", package);
         }
 
+        private void GenerateConsolidateHoldingScript()
+        {
+            string packageHol = System.IO.File.ReadAllText(@"C:\Test\consolidate-holdings.dspkg");
+            Console.WriteLine(packageHol);
+
+            ConsolidateHoldingsBuilder chb = new ConsolidateHoldingsBuilder();
+            string insert = chb.CreateHoldingInsertStatement(dt, schema, sqlTable_TextBox.Text);
+            string fixHoldings = chb.CreateFixHoldingStatement();
+
+            Console.WriteLine("INSERT HOLDINGS : " + insert);
+            Console.WriteLine("FIX FIX HOLDINGS : " + fixHoldings);
+
+            string task = String.Concat(ConsolidateHoldingsStrings.consolHoldingsTaskStart
+                                        ,Environment.NewLine
+                                        ,Environment.NewLine
+                                        ,insert
+                                        ,Environment.NewLine);
+
+            packageHol = packageHol.Replace("<<NEW IMPORT>>", task);
+            packageHol = packageHol.Replace("<<FIX HOLDINGS>>", fixHoldings);
+            packageHol = packageHol.Replace("<<TASK END>>", ConsolidateHoldingsStrings.consolHoldingsTaskEnd);
+
+            System.IO.File.WriteAllText(@"C:\Test\consolidate-holdings.dspkg", packageHol);
+            Console.WriteLine("FINISHED PACKAGE : ");
+            Console.WriteLine(packageHol);
+        }
+
         private void Generate_Scripts_Click(object sender, RoutedEventArgs e)
         {
-
-            var result =  MessageBox.Show("Do you want to include this file in ConsolidateInstruments?",
-                                          "Consolidate Instruments", 
-                                          MessageBoxButton.YesNo, 
-                                          MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
+            //check if its the holding file and offer to create the holding package.
+            if (fileName.ToLower().Contains("holding"))
             {
-                popluate2ndLineScripts();
-                GenerateSqlScripts();
-                addXMLTask();
+                var result = MessageBox.Show("Do you want to create the Consolidate-Holdings package from this file?",
+                                              "Consolidate Holdings",
+                                              MessageBoxButton.YesNo,
+                                              MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    GenerateConsolidateHoldingScript();
+                } 
             }
-            else
-            {
-                GenerateSqlScripts();
-                addXMLTask();
-            }            
+
+            //Create scripts
+            GenerateConsolidateInstrumentScript();
+            GenerateSqlScripts();
+            addXMLTask();    
         }
     }
 }

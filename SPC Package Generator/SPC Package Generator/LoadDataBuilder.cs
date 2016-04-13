@@ -59,19 +59,13 @@ namespace SPC_Package_Generator
 
             System.IO.File.WriteAllText(@"C:\Test\load-data.dspkg", final);
 
-            //Create consolidate Instrument package
-            string consolInstpackage = ConsolidateInstrumentStrings.consolInsPackageStart
-                        + ConsolidateInstrumentStrings.consolInsPackageInstrumentTaskStart + @"<<TEMP TABLE>>
-
-                            <<NEW TASK>>";
-            System.IO.File.WriteAllText(@"C:\Test\consolidate-instruments.dspkg", consolInstpackage);
+            CreateConsolInstPackage();
 
             //start wizard
             SqlColumnMapping sqlCol = new SqlColumnMapping(schema, filepaths, namePatterns, filenames);
             sqlCol.Show();
 
         }
-        //####################################################
 
         //##### Create Variable XML Lists ####################
         public void createXMLVars(string namePattern, String filename)
@@ -85,10 +79,8 @@ namespace SPC_Package_Generator
             variableXMLList = variableXMLList + Environment.NewLine + var;
             
         }
-        //####################################################
 
         //##### Create C# Task XML Lists ####################
-
         private void addCSharpTask(string namePattern)
         {
             string taskString = @"
@@ -103,7 +95,27 @@ namespace SPC_Package_Generator
 
             cSharpTaskList = cSharpTaskList + finalTaskString + "\n";
         }
-        //####################################################
 
+        //##### Create Consolidate Instruments Package #######
+        private void CreateConsolInstPackage()
+        {
+            string consolInstpackage = ConsolidateInstrumentStrings.consolInsPackageStart
+                        + ConsolidateInstrumentStrings.consolInsPackageInstrumentTaskStart + @"<<TEMP TABLE>>
+
+    <<NEW TASK>>
+
+  /**************************************************************************
+  *                                                                         *
+  *                         Refresh Instrument Fields                       *
+  *                                                                         *
+  ***************************************************************************/
+
+    <<NEW REFRESH>>
+
+    <<END>>";
+
+
+            System.IO.File.WriteAllText(@"C:\Test\consolidate-instruments.dspkg", consolInstpackage);
+        }
     }
 }

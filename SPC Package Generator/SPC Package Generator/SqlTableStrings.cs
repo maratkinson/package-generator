@@ -59,5 +59,51 @@ namespace SPC_Package_Generator
                 return "";
             }
         }
+
+        //loop through DataTable from SqlColumnMapping form and generate sql script columns.
+        public string CreateInsertColumnList(DataTable dt)
+        {
+            string columns = "";
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr["InstrumentImport"] != null)
+                {
+                    Console.WriteLine(dr["InstrumentImport"].ToString());
+                    if (bool.Parse(dr["InstrumentImport"].ToString()))
+                    {
+                        columns = String.Concat(
+                                        columns,
+                                        "   " + dr["ActualColumn"], //add space in front for indentation formatting.
+                                        ",",
+                                        Environment.NewLine);
+                    }
+                }
+            }
+            return columns;
+        }
+
+        //loop through DataTable from SqlColumnMapping form and generate sql script columns.
+        public string CreateSelectColumnList(DataTable dt)
+        {
+            string columns = "";
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr["InstrumentImport"] != null)
+                {
+                    if (bool.Parse(dr["InstrumentImport"].ToString()))
+                    {
+                        columns = String.Concat(
+                                        columns,
+                                        "   src.",
+                                        dr["ActualColumn"], //add space in front for indentation formatting.
+                                        ", ",
+                                        Environment.NewLine);
+                    }
+                }
+            }
+            return columns;
+        }
     }
 }

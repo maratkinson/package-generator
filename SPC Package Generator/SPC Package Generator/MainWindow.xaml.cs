@@ -138,9 +138,31 @@ namespace SPC_Package_Generator
                 MessageBox.Show("Success");
             }
 
+            //Create Consolidate Holdings Script
+
+            CreateHoldingsPackage();
+
             //takes a list of all the files and builds the actual first stage package
             LoadDataBuilder ld = new LoadDataBuilder();
             ld.Build_Package(filepaths, filenames, schema);
+        }
+
+        //##### Create Consolidate Holdings Package #######
+        private void CreateHoldingsPackage()
+        {
+            string consolHolpackage = ConsolidateHoldingsStrings.consolHoldingsPackageStart +
+            @"
+    <<NEW IMPORT>>
+
+
+    <<FIX HOLDINGS>>
+
+    <<TASK END>>
+
+            " + ConsolidateHoldingsStrings.consolHoldingsPackageEnd;
+
+
+            System.IO.File.WriteAllText(@"C:\Test\consolidate-holdings.dspkg", consolHolpackage);
         }
     }
 }

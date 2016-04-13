@@ -42,8 +42,23 @@ namespace SPC_Package_Generator
             newRow["ActualColumn"] = "DateCreated datetime default GetDate()";
             newRow["Nullable"] = null;
             newRow["TypeColumn"] = "";
-            columnsDT.Rows.Add(newRow);
+            newRow["InstrumentImport"] = true;
+            newRow["InstrumentRefresh"] = true;
+            newRow["PortfolioImport"] = false;
+            newRow["PortfolioRefresh"] = false;
+            newRow["IssuerImport"] = false;
+            newRow["IssuerRefresh"] = false;
+            newRow["BenchConstImport"] = false;
+            newRow["BenchConstRefresh"] = false;
+            newRow["CurrencyImport"] = false;
+            newRow["CurrencyRefresh"] = false;
+            newRow["CountryImport"] = false;
+            newRow["CountryRefresh"] = false;
+            newRow["ExchangeImport"] = false;
+            newRow["ExchangeRefresh"] = false;
 
+            columnsDT.Rows.Add(newRow);
+            
             string tempTable = sts.GenerateCreateTable("temp", "@newInstrument", columnsDT);
 
             string final = String.Concat(tempTable,
@@ -82,40 +97,90 @@ print  'Found ' + convert(varchar, @@rowcount) + ' new Instrument records...'", 
             return insertBegin;
         }
 
-        //loop through DataTable from SqlColumnMapping form and generate sql script columns.
-        public string CreateSelectColumnList(DataTable dt)
-        {
-            string columns = "";
-
-            foreach (DataRow dr in dt.Rows)
-            {
-                if (bool.Parse(dr["InstrumentImport"].ToString()))
-                {
-                    columns = String.Concat(
-                                    columns,
-                                    "   src.",
-                                    dr["ActualColumn"], //add space in front for indentation formatting.
-                                    " ",
-                                    Environment.NewLine);
-                }
-            }
-            return columns;
-        }
-
-         //loop through DataTable from SqlColumnMapping form and generate sql script columns.
+        //Loop through DataTable from SqlColumnMapping form and generate sql script columns.
         public string CreateColumnList(DataTable dt)
         {
             string columns = "";
 
             foreach (DataRow dr in dt.Rows)
             {
-                if (bool.Parse(dr["InstrumentImport"].ToString()))
+                if (dr["InstrumentImport"] != null)
                 {
-                    columns = String.Concat(
-                                    columns,
-                                    "   " + dr["ActualColumn"], //add space in front for indentation formatting.
-                                    ",",
-                                    Environment.NewLine);
+                    if (bool.Parse(dr["InstrumentImport"].ToString()))
+                    {
+                        columns = String.Concat(
+                                        columns,
+                                        "   src.",
+                                        dr["ActualColumn"], //add space in front for indentation formatting.
+                                        " ",
+                                        Environment.NewLine);
+                    }
+                }
+            }
+            return columns;
+        }
+
+        //Loop through DataTable from SqlColumnMapping form and generate sql script columns.
+        public string CreateSelectColumnList(DataTable dt)
+        {
+            string columns = "";
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr["InstrumentImport"] != null)
+                {
+                    Console.WriteLine(dr["InstrumentImport"].ToString());
+                    if (bool.Parse(dr["InstrumentImport"].ToString()))
+                    {
+                        columns = String.Concat(
+                                        columns,
+                                        "   " + dr["ActualColumn"], //add space in front for indentation formatting.
+                                        ",",
+                                        Environment.NewLine);
+                    }
+                }
+            }
+            return columns;
+        }
+
+        public string CreateRefreshStatement(DataTable dt, string tableName, string schema)
+        {
+            string start = Environment.NewLine + Environment.NewLine + @" UPDATE stage.Instrument
+ SET ";
+            string columns = CreateUpdateColumns(dt);
+
+            string from = @"FROM stage.Instrument stage
+INNER JOIN " + schema + "." + tableName + String.Format(@" src ON src.code = stage.code
+            
+ print 'Refreshed ' + convert(varchar, @@rowcount) + ' existing instruments from {0}.'", tableName);
+
+            string final = String.Concat(start,
+                                         columns,
+                                         from,
+                                         Environment.NewLine,
+                                         "<<NEW REFRESH>>");
+
+            return final;
+        }
+
+        private string CreateUpdateColumns(DataTable dt)
+        {
+            string columns = "";
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr["InstrumentRefresh"] != null)
+                {
+                    if (bool.Parse(dr["InstrumentRefresh"].ToString()))
+                    {
+                        columns = String.Concat(
+                                        columns,
+                                        "   " + dr["ActualColumn"], //add space in front for indentation formatting.
+                                        " = src.",
+                                        dr["ActualColumn"],
+                                        ",",
+                                        Environment.NewLine);
+                    }
                 }
             }
             return columns;
