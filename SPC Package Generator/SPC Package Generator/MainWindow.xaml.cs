@@ -138,9 +138,10 @@ namespace SPC_Package_Generator
                 MessageBox.Show("Success");
             }
 
-            //Create Consolidate Holdings Script
+            //Create Consolidate Holdings/Static Script
 
             CreateHoldingsPackage();
+            CreateStaticPackage();
 
             //takes a list of all the files and builds the actual first stage package
             LoadDataBuilder ld = new LoadDataBuilder();
@@ -163,6 +164,12 @@ namespace SPC_Package_Generator
 
 
             System.IO.File.WriteAllText(@"C:\Test\consolidate-holdings.dspkg", consolHolpackage);
+        }
+
+        //##### Create Consolidate Holdings Package #######
+        private void CreateStaticPackage()
+        {
+            System.IO.File.WriteAllText(@"C:\Test\consolidate-static.dspkg", ConsolidateStaticStrings.consolStaticStart);
         }
     }
 }

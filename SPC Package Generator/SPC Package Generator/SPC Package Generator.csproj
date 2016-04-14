@@ -57,6 +57,7 @@
     <Compile Include="ConsolidateHoldingsStrings.cs" />
     <Compile Include="ConsolidateInstrumentBuilder.cs" />
     <Compile Include="ConsolidateInstrumentStrings.cs" />
+    <Compile Include="ConsolidateStaticBuilder.cs" />
     <Compile Include="ConsolidateStaticStrings.cs" />
     <Compile Include="File.cs" />
     <Compile Include="SqlColumnMapping.xaml.cs">

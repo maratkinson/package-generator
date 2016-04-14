@@ -50,6 +50,7 @@ namespace SPC_Package_Generator
             schema = _schema;
 
             InitializeComponent();
+
             dt.Columns.Add("Include");
             dt.Columns.Add("FileColumn");
             dt.Columns.Add("ActualColumn");
@@ -61,14 +62,18 @@ namespace SPC_Package_Generator
             dt.Columns.Add("PortfolioRefresh");
             dt.Columns.Add("IssuerImport");
             dt.Columns.Add("IssuerRefresh");
-            dt.Columns.Add("BenchConstImport");
-            dt.Columns.Add("BenchConstRefresh");
+            dt.Columns.Add("Benchmark_ConstituentImport");
+            dt.Columns.Add("Benchmark_ConstituentRefresh");
             dt.Columns.Add("CurrencyImport");
             dt.Columns.Add("CurrencyRefresh");
             dt.Columns.Add("CountryImport");
             dt.Columns.Add("CountryRefresh");
             dt.Columns.Add("ExchangeImport");
             dt.Columns.Add("ExchangeRefresh");
+            dt.Columns.Add("Portfolio_HoldingImport");
+            dt.Columns.Add("Portfolio_HoldingRefresh");
+            dt.Columns.Add("BenchmarkImport");
+            dt.Columns.Add("BenchmarkRefresh");
 
             //get column headers
             getColumnMappings(filePath);
@@ -76,6 +81,8 @@ namespace SPC_Package_Generator
             populate_misc_table();
 
             populateGridTable();
+
+            PopulateEntityComboBox();
 
         }
 
@@ -144,7 +151,49 @@ namespace SPC_Package_Generator
                     nullable = false;
                 }
 
-                dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, true, true, true, true, false, false, false, false, false, false, false, false, false, false);
+                Console.WriteLine("NAME PATTERN : " + namePattern);
+                
+                //Insert rows with correct allocation of import boolean values
+                if (namePattern.ToLower().Contains("instrument"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, true, true, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("portfolioholding"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, true, true, false, false, false, false, false, false, false, false, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("portfolio") && !namePattern.ToLower().Contains("holding"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, true, true, false, false, false, false, false, false, false, false, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("issuer"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, false, false, true, true, false, false, false, false, false, false, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("benchmark"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("benchmarkconstituent"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, false, false, false, false, true, true, false, false, false, false, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("country"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("currency"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, false, false, false, false, false, false, true, true, false, false, false, false, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("exchange"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, false);
+                }
+                else if (namePattern.ToLower().Contains("benchmark") && !namePattern.ToLower().Contains("constituent"))
+                {
+                    dt.Rows.Add(true, actualCol, suggestionCol, typeCol, nullable, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true);
+                }
             }
 
             mainGridView.ItemsSource = dt.AsDataView(); 
@@ -257,7 +306,6 @@ namespace SPC_Package_Generator
         private void GenerateSqlScripts()
         {
             SqlTableStrings sts = new SqlTableStrings();
-            sts.GenerateCreateTable(schema, sqlTable_TextBox.Text, dt);
 
             string sql = sts.GenerateCreateTable(schema, sqlTable_TextBox.Text, dt);
 
@@ -272,7 +320,7 @@ namespace SPC_Package_Generator
             ConsolidateInstrumentBuilder cib = new ConsolidateInstrumentBuilder();
 
             //if it is main instrument file create temp tables
-            if (sqlTable_TextBox.Text.ToLower().Contains("instrument"))
+            if (entity_ComboBox.SelectedIndex == 0)
             {
                 package = package.Replace("<<TEMP TABLE>>", cib.CreateTempInstTable(dt));
             }
@@ -322,6 +370,31 @@ namespace SPC_Package_Generator
             Console.WriteLine(packageHol);
         }
 
+        private void GenerateConsolidateStaticScripts()
+        {
+            string entity = entity_ComboBox.SelectedValue.ToString();
+            if (entity_ComboBox.SelectedIndex != 0 || entity_ComboBox.SelectedIndex != 1)
+            {
+                string packageStatic = System.IO.File.ReadAllText(@"C:\Test\consolidate-static.dspkg");
+                string staticTask = ConsolidateStaticStrings.consolStaticTask;
+
+                ConsolidateStaticBuilder csb = new ConsolidateStaticBuilder();
+
+
+                string insert = csb.AddEntityImport(RemoveFalseRows(dt, entity + "Import"), entity, schema);
+                string update = csb.AddEntityRefresh(RemoveFalseRows(dt, entity + "Refresh"), entity, schema);
+
+                staticTask = staticTask.Replace("<<ENTITY>>", entity);
+                staticTask = staticTask.Replace("<<NEW IMPORT>>", insert);
+                staticTask = staticTask.Replace("<<NEW REFRESH>>", update);
+
+                //add new task to package
+                packageStatic = packageStatic.Replace("<<NEW TASK>>", staticTask);
+
+                System.IO.File.WriteAllText(@"C:\Test\consolidate-static.dspkg", packageStatic);
+            }
+        }
+
         private void Generate_Scripts_Click(object sender, RoutedEventArgs e)
         {
             //check if its the holding file and offer to create the holding package.
@@ -339,9 +412,77 @@ namespace SPC_Package_Generator
             }
 
             //Create scripts
+            
+            GenerateConsolidateStaticScripts();
+
             GenerateConsolidateInstrumentScript();
             GenerateSqlScripts();
-            addXMLTask();    
+            addXMLTask();
+        }
+
+        private void PopulateEntityComboBox()
+        {
+            entity_ComboBox.Items.Add("Instrument");
+            entity_ComboBox.Items.Add("Portfolio_Holding");
+            entity_ComboBox.Items.Add("Portfolio");
+            entity_ComboBox.Items.Add("Issuer");
+            entity_ComboBox.Items.Add("Benchmark");
+            entity_ComboBox.Items.Add("Benchmark_Constituent");
+            entity_ComboBox.Items.Add("Country");
+            entity_ComboBox.Items.Add("Currency");
+            entity_ComboBox.Items.Add("Exchange");
+
+            if (namePattern.ToLower().Contains("instrument"))
+            {
+                entity_ComboBox.SelectedIndex = 0;
+            }
+            else if (namePattern.ToLower().Contains("portfolio_holding"))
+            {
+                entity_ComboBox.SelectedIndex = 1;
+            }
+            else if (namePattern.ToLower().Contains("portfolio") && !namePattern.ToLower().Contains("holding"))
+            {
+                entity_ComboBox.SelectedIndex = 2;
+            }
+            else if (namePattern.ToLower().Contains("issuer"))
+            {
+                entity_ComboBox.SelectedIndex = 3;
+            }
+            else if (namePattern.ToLower().Contains("benchmark"))
+            {
+                entity_ComboBox.SelectedIndex = 4;
+            }
+            else if (namePattern.ToLower().Contains("benchmark_constituent"))
+            {
+                entity_ComboBox.SelectedIndex = 5;
+            }
+            else if (namePattern.ToLower().Contains("country"))
+            {
+                entity_ComboBox.SelectedIndex = 6;
+            }
+            else if (namePattern.ToLower().Contains("currency"))
+            {
+                entity_ComboBox.SelectedIndex = 7;
+            }
+            else if (namePattern.ToLower().Contains("exchange"))
+            {
+                entity_ComboBox.SelectedIndex = 8;
+            }
+        }
+
+        private DataTable RemoveFalseRows(DataTable dt, string check)
+        {
+            DataTable newDT = dt;
+            for(int i = newDT.Rows.Count-1; i >= 0; i--)
+            {
+                DataRow dr = newDT.Rows[i];
+                if (!bool.Parse(dr[check].ToString())) //check if row has not been selected for import/refresh
+                {
+                    dr.Delete();
+                }
+            }
+
+            return newDT;
         }
     }
 }

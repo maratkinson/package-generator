@@ -48,18 +48,21 @@ namespace SPC_Package_Generator
             newRow["PortfolioRefresh"] = false;
             newRow["IssuerImport"] = false;
             newRow["IssuerRefresh"] = false;
-            newRow["BenchConstImport"] = false;
-            newRow["BenchConstRefresh"] = false;
+            newRow["Benchmark_ConstituentImport"] = false;
+            newRow["Benchmark_ConstituentRefresh"] = false;
             newRow["CurrencyImport"] = false;
             newRow["CurrencyRefresh"] = false;
             newRow["CountryImport"] = false;
             newRow["CountryRefresh"] = false;
             newRow["ExchangeImport"] = false;
             newRow["ExchangeRefresh"] = false;
-
+            newRow["Portfolio_HoldingImport"] = true;
+            newRow["Portfolio_HoldingRefresh"] = true;
+            newRow["BenchmarkImport"] = false;
+            newRow["BenchmarkRefresh"] = false;
             columnsDT.Rows.Add(newRow);
             
-            string tempTable = sts.GenerateCreateTable("temp", "@newInstrument", columnsDT);
+            string tempTable = sts.GenerateTempTable("temp", "Instrument", columnsDT);
 
             string final = String.Concat(tempTable,
                                          Environment.NewLine);
