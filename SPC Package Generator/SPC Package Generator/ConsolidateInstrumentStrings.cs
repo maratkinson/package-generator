@@ -58,7 +58,13 @@ namespace SPC_Package_Generator
 
 
 
+        public static string consolInsPackageInstrumentTaskEnd = @"
+set nocount off
 
+]]>
+        </Property>
+        <Parameters />
+      </Task>";
 
 
     }
